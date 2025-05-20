@@ -1,10 +1,22 @@
 <x-chat-layout>
   
       <!-- Chat Container -->
+      @php
+          // Filter pesan hanya untuk user & assistant
+          $chatMessages = collect($messages)->filter(fn($m) => in_array($m['role'], ['user', 'assistant']))->values();
+      @endphp
       <div class="flex-1 overflow-y-auto p-4 md:p-6 chat-container" id="chatContainer">
           <div class="max-w-3xl mx-auto space-y-6 pt-4" id="messages">
-              <!-- Render old messages from backend -->
-              @foreach($messages as $msg)
+              <!-- Intro hanya jika BELUM ADA pesan user -->
+              @if($chatMessages->count() === 0)
+                  <div class="flex flex-col items-center justify-center min-h-[300px]">
+                      <img src="{{ asset('assets/logo.png') }}" alt="Tabungin" class="w-20 h-20 mb-2" onerror="this.src='{{ asset('assets/logo.png') }}'">
+                      <span class="text-2xl font-bold text-lavender-700 mb-1">Tabungin</span>
+                      <span class="text-gray-500 text-center max-w-xs mb-2">Tabungin adalah asisten AI <b>khusus keuangan</b> yang siap membantu Anda menabung, mengelola keuangan, dan menjawab pertanyaan Anda dengan cerdas dan ramah. Jawaban AI dapat mengandung <b>format markdown</b> seperti tabel, list, atau kode.</span>
+                  </div>
+              @endif
+              <!-- Render chat bubble hanya untuk user & assistant -->
+              @foreach($chatMessages as $msg)
                   <div class="flex items-start {{ $msg['role'] === 'user' ? 'justify-end' : 'space-x-3' }} message {{ $msg['role'] === 'user' ? 'user-message' : 'ai-message' }}">
                       @if($msg['role'] === 'assistant')
                           <img src="{{ asset('assets/logo.png') }}" alt="Akira" class="w-9 h-9 rounded-full flex-shrink-0 shadow-lg" onerror="this.src='{{ asset('assets/logo.png') }}'">
@@ -28,54 +40,45 @@
                           </div>
                       @else
                       <div class="flex items-start justify-end w-full gap-2">
-    {{-- Nama dan bubble chat --}}
-    <div class="flex flex-col items-end">
-        <span class="text-xs text-violet-700 font-semibold mb-1 mr-1">
-            @auth
-                {{ Auth::user()->name }}
-            @else
-                Pengunjung
-            @endauth
-        </span>
-        <div class="user-bubble p-4 shadow-md max-w-md text-white bg-violet-600 rounded-lg">
-            <p>{{ $msg['content'] }}</p>
-        </div>
-    </div>
-
-    {{-- Avatar atau inisial --}}
-    @auth
-        @if(Auth::user()->avatar)
-            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" 
-                 alt="{{ Auth::user()->name }}"
-                 class="w-8 h-8 rounded-full object-cover border border-white ml-2">
-        @else
-            <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center ml-2">
-                <span class="text-purple-600 font-semibold text-sm">
-                    {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
-                </span>
-            </div>
-        @endif
-    @else
-        <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500" fill="none"
-                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                      d="M5.121 17.804A9.003 9.003 0 0112 15a9.003 9.003 0 016.879 2.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-        </div>
-    @endauth
-</div>
-
+                          {{-- Nama dan bubble chat --}}
+                          <div class="flex flex-col items-end">
+                              <span class="text-xs text-violet-700 font-semibold mb-1 mr-1">
+                                  @auth
+                                      {{ Auth::user()->name }}
+                                  @else
+                                      Pengunjung
+                                  @endauth
+                              </span>
+                              <div class="user-bubble p-4 shadow-md max-w-md text-white bg-violet-600 rounded-lg">
+                                  <p>{{ $msg['content'] }}</p>
+                              </div>
+                          </div>
+                          {{-- Avatar atau inisial --}}
+                          @auth
+                              @if(Auth::user()->avatar)
+                                  <img src="{{ asset('storage/' . Auth::user()->avatar) }}" 
+                                       alt="{{ Auth::user()->name }}"
+                                       class="w-8 h-8 rounded-full object-cover border border-white ml-2">
+                              @else
+                                  <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center ml-2">
+                                      <span class="text-purple-600 font-semibold text-sm">
+                                          {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
+                                      </span>
+                                  </div>
+                              @endif
+                          @else
+                              <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center ml-2">
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500" fill="none"
+                                       viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                      <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M5.121 17.804A9.003 9.003 0 0112 15a9.003 9.003 0 016.879 2.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
+                                  </svg>
+                              </div>
+                          @endauth
+                      </div>
                       @endif
                   </div>
               @endforeach
-              @if(count($messages) === 0)
-                  <div class="flex flex-col items-center justify-center min-h-[300px]">
-                      <img src="{{ asset('assets/logo.png') }}" alt="Tabungin" class="w-20 h-20 mb-2" onerror="this.src='{{ asset('assets/logo.png') }}'">
-                      <span class="text-2xl font-bold text-lavender-700 mb-1">Tabungin</span>
-                      <span class="text-gray-500 text-center max-w-xs mb-2">Tabungin adalah asisten AI <b>khusus keuangan</b> yang siap membantu Anda menabung, mengelola keuangan, dan menjawab pertanyaan Anda dengan cerdas dan ramah. Jawaban AI dapat mengandung <b>format markdown</b> seperti tabel, list, atau kode.</span>
-                  </div>
-              @endif
           </div>
       </div>
       <!-- Input Area -->
@@ -281,3 +284,4 @@
 
 </x-chat-layout>
 
+ 
