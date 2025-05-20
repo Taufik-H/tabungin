@@ -1,0 +1,192 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.max-container {
+    @apply px-6 md:px-10 lg:px-20 xl:max-w-[2000px];
+}
+
+/* Floating shapes and chat UI styles moved from chat.blade.php */
+
+body {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    background-color: white;
+    background-image: radial-gradient(
+            circle at 10% 20%,
+            rgba(180, 173, 255, 0.05) 0%,
+            transparent 20%
+        ),
+        radial-gradient(
+            circle at 90% 80%,
+            rgba(245, 158, 11, 0.05) 0%,
+            transparent 20%
+        );
+    background-attachment: fixed;
+}
+
+.floating-shapes div {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.1;
+    z-index: -1;
+}
+.shape1 {
+    width: 100px;
+    height: 100px;
+    background: #b4adff;
+    top: 10%;
+    left: 10%;
+    animation: float 15s infinite alternate ease-in-out;
+}
+.shape2 {
+    width: 150px;
+    height: 150px;
+    background: #f59e0b;
+    bottom: 10%;
+    right: 10%;
+    animation: float 20s infinite alternate-reverse ease-in-out;
+}
+.shape3 {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(45deg, #b4adff, #f59e0b);
+    top: 50%;
+    right: 20%;
+    animation: float 12s infinite alternate ease-in-out;
+}
+@keyframes float {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    100% {
+        transform: translate(30px, 30px) rotate(15deg);
+    }
+}
+
+.typing-indicator {
+    display: inline-flex;
+    align-items: center;
+}
+.typing-indicator span {
+    height: 6px;
+    width: 6px;
+    margin: 0 1px;
+    background-color: #b4adff;
+    border-radius: 50%;
+    display: inline-block;
+    animation: typing 1.4s infinite ease-in-out both;
+}
+.typing-indicator span:nth-child(1) {
+    animation-delay: 0s;
+}
+.typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+.typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+@keyframes typing {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+.message {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.4s forwards cubic-bezier(0.19, 1, 0.22, 1);
+}
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.user-message {
+    animation-delay: 0.1s;
+    gap: 0.75rem;
+}
+.ai-message {
+    animation-delay: 0.2s;
+}
+
+.chat-container {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(180, 173, 255, 0.4) transparent;
+}
+.chat-container::-webkit-scrollbar {
+    width: 4px;
+}
+.chat-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+.chat-container::-webkit-scrollbar-thumb {
+    background-color: rgba(180, 173, 255, 0.4);
+    border-radius: 4px;
+}
+
+.ai-bubble {
+    position: relative;
+    background: white;
+    border: 1px solid rgba(180, 173, 255, 0.3);
+    border-radius: 1rem;
+}
+.user-bubble {
+    position: relative;
+    background: #b4adff;
+    border-radius: 1rem;
+    padding: 1rem;
+    max-width: 28rem;
+    box-shadow: 0 1px 4px 0 rgba(180, 173, 255, 0.08);
+    word-break: break-word;
+}
+.user-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    min-width: 2.25rem;
+    min-height: 2.25rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-left: 0.5rem;
+    margin-right: 0.25rem;
+    margin-top: 0.25rem;
+    box-shadow: 0 1px 4px 0 rgba(180, 173, 255, 0.08);
+}
+.user-name {
+    margin-bottom: 0.25rem;
+    margin-right: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #7c3aed;
+    text-align: right;
+}
+
+.send-button {
+    background: #f59e0b;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s;
+    will-change: transform, box-shadow;
+    transform-origin: center;
+}
+.send-button:hover {
+    box-shadow: 0 4px 16px 0 rgba(245, 158, 11, 0.25);
+    background: #fbbf24;
+}
+.send-button:active {
+    box-shadow: 0 2px 8px 0 rgba(245, 158, 11, 0.18);
+}
+
+.input-container {
+    position: relative;
+    z-index: 10;
+    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.8);
+}
